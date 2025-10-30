@@ -3,63 +3,110 @@ from PyQt6 import uic
 import sys,time
 import pyvisa as pv
 from PyQt6.QtCore import QTimer
+import numpy as np
 
 class MainWindow(QWidget):
     def __init__(self, dev):
         super().__init__()
-        self.inst = None
-        # if dev == None:
-            # self.close()
-            # sys.exit(1)
+
+        if dev == None:
+            self.inst = None
+            self.close()
+            sys.exit(1)
+
         self.main = uic.loadUi('UIs/main.ui', self)
-        self.main.led.setStyleSheet("color:red;")
-        self.main.led.setText("\U00002B24")
         self.main.sVdB.setText("\U000002C5")
         self.main.sVuB.setText("\U000002C4")
         self.main.sCdB.setText("\U000002C5")
         self.main.sCuB.setText("\U000002C4")
+        self.main.refreshB.setText("\U000021BB")
         self.main.sVdB.clicked.connect(lambda x: self.stepUD(qty='VOLT', dir="DOWN"))
         self.main.sVuB.clicked.connect(lambda x: self.stepUD(qty='VOLT', dir="UP"))
         self.main.sCdB.clicked.connect(lambda x: self.stepUD(qty='CURR', dir="DOWN"))
         self.main.sCuB.clicked.connect(lambda x: self.stepUD(qty='CURR', dir="UP"))
+        self.main.outB.clicked.connect(self.outF)
+        self.main.sVRampB.clicked.connect(lambda x: self.rampF(qty='VOLT'))
+        self.main.sCRampB.clicked.connect(lambda x: self.rampF(qty='CURR'))
+        self.main.refreshB.clicked.connect(self.refreshF)
 
-        # self.rm = pv.ResourceManager()
-        # self.inst = self.rm.open_resource(dev)
-        # self.title.setText(self.inst.query("*IDN?").strip())
-        # self.main.sVoltage.display(self.inst.query("VOLT?"))
-        # self.main.sCurrent.display(self.inst.query("CURR?"))
-        # self.main.mVoltage.display(self.inst.query("MEAS:VOLT?"))
-        # self.main.mCurrent.display(self.inst.query("MEAS:CURR?"))
+        self.rm = pv.ResourceManager()
+        self.inst = self.rm.open_resource(dev)
+
+        self.refreshF()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(1000) # auto update time in ms
-        
-        self.main.led.setStyleSheet("color:green;")
-        self.main.show()
+
+    def refreshF(self):
+        val = self.inst.query("*IDN?").strip().split(',')
+        self.title.setText("{} - {}".format(val[0],val[1]))
+        b = val[2].split('/')
+        self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
+        self.main.sVoltage.setText('{:.3f}'.format(float(self.inst.query("VOLT?").strip())))
+        self.main.sCurrent.setText('{:.3f}'.format(float(self.inst.query("CURR?").strip())))
+        if int(self.inst.query("OUTP:STAT?")) == 1:
+            self.main.outB.setStyleSheet("background-color: #00F000;")
+        else:
+            self.main.outB.setStyleSheet("background-color: #000F00;")
+
+    def rampF(self,qty):
+        c = float(self.inst.query("{}?".format(qty)).strip())
+        if qty == "VOLT":
+            s = float(self.main.sVoltage.text().strip())
+            if s>32: 
+                s=32.0
+            n = int(self.main.sVN.text().strip())
+            dt = float(self.main.sVdt.text().strip())
+        else:
+            s = float(self.main.sCurrent.text().strip())
+            if s>10:
+                s=10.0
+            n = int(self.main.sCN.text().strip())
+            dt = float(self.main.sCdt.text().strip())
+        vals = np.linspace(c,s,n)
+        for i in vals:
+            self.inst.write("{} {}".format(qty,i))
+            time.sleep(dt)
+
+    def outF(self):
+        val = int(self.inst.query("OUTP:STAT?"))
+        self.inst.write("OUTP:STAT {}".format(1-val))
+        if val == 1:
+            self.main.outB.setStyleSheet("background-color: #000F00;")
+        else:
+            self.main.outB.setStyleSheet("background-color: #00F000;")
 
     def stepUD(self,qty,dir):
         if qty == "VOLT":
             if self.main.sVCoarse.value() == 0:
-                step=0.1
+                step = 0.01
+            elif self.main.sVCoarse.value() == 1:
+                step = 0.1
             else:
                 step=1
+            if dir == "UP":
+                self.main.sVoltage.setText('{:.3f}'.format(float(self.main.sVoltage.text())+step))
+            else:
+                self.main.sVoltage.setText('{:.3f}'.format(float(self.main.sVoltage.text())-step))
         elif qty=="CURR":
             if self.main.sCCoarse.value() == 0:
+                step=0.01
+            elif self.main.sCCoarse.value() == 1:
                 step=0.1
             else:
                 step=1
-        print("Stepping {} {}".format(qty,dir))
-        # self.inst.write("{}:STEP {}".format(qty,step))
-        # self.inst.write("{} {}".format(qty,dir))
+            if dir == "UP":
+                self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())+step))
+            else:
+                self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())-step))        
+        self.inst.write("{}:STEP {}".format(qty,step))
+        self.inst.write("{} {}".format(qty,dir))
         
-
-
     def update(self):
-        self.main.led.setStyleSheet("color:red;")
-        # self.main.mVoltage.display(self.inst.query("MEAS:VOLT?"))
-        # self.main.mCurrent.display(self.inst.query("MEAS:CURR?"))
-        self.main.led.setStyleSheet("color:green;")
+        self.main.mVoltage.display(self.inst.query("MEAS:VOLT?").strip())
+        self.main.mCurrent.display(self.inst.query("MEAS:CURR?").strip())
+        self.main.power.setText("Power: {:.3f}".format(float(self.inst.query("MEAS:POW?").strip())))
 
     def close(self):
         if not self.inst == None:
@@ -74,7 +121,7 @@ class DevWindow(QWidget):
         super().__init__()
         self.devWin = uic.loadUi('UIs/devWin.ui', self)
         self.devWin.errText.setVisible(False)
-        # self.devWin.okB.setDisabled(True)
+        self.devWin.okB.setDisabled(True)
 
         self.devWin.refreshB.clicked.connect(self.refreshF)
         self.devWin.okB.clicked.connect(self.okF)
@@ -84,7 +131,7 @@ class DevWindow(QWidget):
 
     def okF(self):
         if self.deviceList.currentRow() != -1:
-            selectedDevice = self.deviceList.currentItem().text()
+            selectedDevice = self.deviceList.currentItem().text().split(' --> ')[0]
         else:
             selectedDevice = None
         self.devWin.close()
