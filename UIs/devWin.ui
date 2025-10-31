@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>400</height>
+    <width>667</width>
+    <height>252</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,6 +29,20 @@
    <string>Select device</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="3" column="1">
+    <widget class="QPushButton" name="refreshB">
+     <property name="text">
+      <string>Refresh list</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Devices found:</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0">
     <widget class="QPushButton" name="okB">
      <property name="font">
@@ -63,20 +77,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QPushButton" name="refreshB">
-     <property name="text">
-      <string>Refresh list</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Devices found:</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QListWidget" name="deviceList">
      <item>
@@ -89,69 +89,6 @@
        <string>Item2</string>
       </property>
      </item>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QPlainTextEdit" name="status">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>22</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <family>Segoe UI</family>
-       <pointsize>10</pointsize>
-       <bold>false</bold>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: #F3F3F3;</string>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>0</number>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="undoRedoEnabled">
-      <bool>false</bool>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="overwriteMode">
-      <bool>false</bool>
-     </property>
-     <property name="backgroundVisible">
-      <bool>false</bool>
-     </property>
-     <property name="placeholderText">
-      <string>Status updates...</string>
-     </property>
     </widget>
    </item>
   </layout>

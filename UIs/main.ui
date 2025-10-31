@@ -6,111 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>392</height>
+    <width>715</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>UHFEL Cathode Power Supply Control GUI</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="10" column="1">
-    <widget class="QLabel" name="label_5">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Voltage (V):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="3">
-    <widget class="QPushButton" name="sVRampB">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>RAMP</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="8">
-    <widget class="QLabel" name="label_13">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>OUTPUT</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="5">
-    <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Curent (A):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" colspan="7">
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Set values:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="5">
-    <widget class="QLineEdit" name="sCN">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string># steps</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1" colspan="7">
-    <widget class="QLabel" name="label_4">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Measured:</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0" colspan="10">
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -127,8 +30,285 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="1">
-    <widget class="QLineEdit" name="sVN">
+   <item row="2" column="1" colspan="7">
+    <widget class="QLabel" name="subTitle">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="6" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,1,1">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>0.1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>0.01</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QSlider" name="sCCoarse">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Coarse</string>
+       </property>
+       <property name="maximum">
+        <number>2</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TickPosition::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="2" colspan="2">
+    <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>0.1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>0.01</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QSlider" name="sVCoarse">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Coarse</string>
+       </property>
+       <property name="maximum">
+        <number>2</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TickPosition::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="8" rowspan="2">
+    <widget class="QPushButton" name="refreshB">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>24</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>R</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="5">
+    <widget class="QLabel" name="label_6">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Curent (A):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Policy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="8" rowspan="2">
+    <widget class="QPushButton" name="outB">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #000F00;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Curent (A):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="5" colspan="3">
+    <widget class="QLCDNumber" name="mCurrent">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="digitCount">
+      <number>15</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <widget class="QLineEdit" name="sVdt">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>hold time (s)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="6">
+    <widget class="QLineEdit" name="sCdt">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>hold time (s)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="5">
+    <widget class="QLineEdit" name="sCN">
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -208,6 +388,18 @@
      </item>
     </layout>
    </item>
+   <item row="10" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Voltage (V):</string>
+     </property>
+    </widget>
+   </item>
    <item row="13" column="1" colspan="6">
     <widget class="QLabel" name="power">
      <property name="font">
@@ -223,15 +415,32 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="6">
-    <widget class="QLineEdit" name="sCdt">
+   <item row="9" column="1" colspan="7">
+    <widget class="QLabel" name="label_4">
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
       </font>
      </property>
-     <property name="placeholderText">
-      <string>hold time (s)</string>
+     <property name="text">
+      <string>Measured:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="8">
+    <widget class="QLabel" name="label_13">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>OUTPUT</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -304,60 +513,6 @@
      </item>
     </layout>
    </item>
-   <item row="11" column="1" colspan="3">
-    <widget class="QLCDNumber" name="mVoltage">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="digitCount">
-      <number>15</number>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="5" colspan="3">
-    <widget class="QLCDNumber" name="mCurrent">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="digitCount">
-      <number>15</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Policy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="7" column="7">
     <widget class="QPushButton" name="sCRampB">
      <property name="sizePolicy">
@@ -395,205 +550,6 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="5">
-    <widget class="QLabel" name="label_6">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Curent (A):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="8" rowspan="2">
-    <widget class="QPushButton" name="outB">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: #000F00;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="2">
-    <widget class="QLineEdit" name="sVdt">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string>hold time (s)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2" colspan="2">
-    <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,1">
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>0.1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>0.01</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QSlider" name="sVCoarse">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Coarse</string>
-       </property>
-       <property name="maximum">
-        <number>2</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::TickPosition::TicksAbove</enum>
-       </property>
-       <property name="tickInterval">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="6" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,1,1">
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>0.1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>0.01</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>1</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QSlider" name="sCCoarse">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="toolTip">
-        <string>Coarse</string>
-       </property>
-       <property name="maximum">
-        <number>2</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Horizontal</enum>
-       </property>
-       <property name="tickPosition">
-        <enum>QSlider::TickPosition::TicksAbove</enum>
-       </property>
-       <property name="tickInterval">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="1" colspan="7">
-    <widget class="QLabel" name="subTitle">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <italic>true</italic>
-      </font>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1" colspan="7">
     <widget class="QLabel" name="title">
      <property name="sizePolicy">
@@ -617,8 +573,40 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="8" rowspan="2">
-    <widget class="QPushButton" name="refreshB">
+   <item row="11" column="1" colspan="3">
+    <widget class="QLCDNumber" name="mVoltage">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="digitCount">
+      <number>15</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="7">
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Set values:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="3">
+    <widget class="QPushButton" name="sVRampB">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -627,12 +615,24 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>24</pointsize>
-       <bold>false</bold>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>R</string>
+      <string>RAMP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLineEdit" name="sVN">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string># steps</string>
      </property>
     </widget>
    </item>

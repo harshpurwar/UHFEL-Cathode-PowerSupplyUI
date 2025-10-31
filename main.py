@@ -2,8 +2,25 @@ from PyQt6.QtWidgets import QApplication, QWidget
 from PyQt6 import uic
 import sys,time
 import pyvisa as pv
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, QThread, pyqtSignal
 import numpy as np
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+
+class Worker(QThread):
+    finished = pyqtSignal()
+    
+    def setData(self,data,inst,qty,dt):
+        self.data=data
+        self.inst = inst
+        self.qty=qty
+        self.dt=dt
+
+    def run(self):
+        for i in self.data:
+            self.inst.write("{} {}".format(self.qty,i))
+            time.sleep(self.dt)
+        self.finished.emit()
 
 class MainWindow(QWidget):
     def __init__(self, dev):
@@ -37,6 +54,12 @@ class MainWindow(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
         self.timer.start(1000) # auto update time in ms
+        
+        self.worker = Worker()
+        self.worker.finished.connect(self.onRampCompletion)
+    
+    def onRampCompletion(self):
+        self.main.rampB.setEnabled(True)
 
     def refreshF(self):
         val = self.inst.query("*IDN?").strip().split(',')
@@ -51,6 +74,7 @@ class MainWindow(QWidget):
             self.main.outB.setStyleSheet("background-color: #000F00;")
 
     def rampF(self,qty):
+        self.main.rampB.setEnabled(False)
         c = float(self.inst.query("{}?".format(qty)).strip())
         if qty == "VOLT":
             s = float(self.main.sVoltage.text().strip())
@@ -65,9 +89,8 @@ class MainWindow(QWidget):
             n = int(self.main.sCN.text().strip())
             dt = float(self.main.sCdt.text().strip())
         vals = np.linspace(c,s,n)
-        for i in vals:
-            self.inst.write("{} {}".format(qty,i))
-            time.sleep(dt)
+        self.worker.setData(vals, self.inst, qty, dt)
+        self.worker.start()
 
     def outF(self):
         val = int(self.inst.query("OUTP:STAT?"))
@@ -147,15 +170,17 @@ class DevWindow(QWidget):
             self.devWin.okB.setDisabled(False)
             self.devWin.errText.setVisible(False)
             for i,key in enumerate(keys):
-                inst = self.rm.open_resource(key)
-                idn = inst.query('*IDN?')
-                inst.close()
-                self.devices[key] = key + " --> " + idn.strip()
+                try:
+                    inst = self.rm.open_resource(key)
+                    idn = inst.query('*IDN?').strip()
+                    inst.close()
+                except:
+                    idn='Unknown'
+                self.devices[key] = key + " --> " + idn
 
         self.devWin.deviceList.clear()
         self.devWin.deviceList.addItems(self.devices.values())
         self.devWin.deviceList.setCurrentRow(0)
-        self.devWin.status.setPlainText("Refreshing... Done!")
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
