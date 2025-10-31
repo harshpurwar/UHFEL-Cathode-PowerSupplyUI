@@ -190,12 +190,12 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>24</pointsize>
+       <pointsize>11</pointsize>
        <bold>false</bold>
       </font>
      </property>
      <property name="text">
-      <string>R</string>
+      <string>Refresh</string>
      </property>
     </widget>
    </item>
@@ -397,21 +397,6 @@
      </property>
      <property name="text">
       <string>Voltage (V):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1" colspan="6">
-    <widget class="QLabel" name="power">
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Power (W):</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -633,6 +618,21 @@
      </property>
      <property name="placeholderText">
       <string># steps</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1" colspan="7">
+    <widget class="QLabel" name="power">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Power (W):</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>

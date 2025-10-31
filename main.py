@@ -8,7 +8,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 class Worker(QThread):
-    finished = pyqtSignal()
+    finished = pyqtSignal(str)
     
     def setData(self,data,inst,qty,dt):
         self.data=data
@@ -20,7 +20,7 @@ class Worker(QThread):
         for i in self.data:
             self.inst.write("{} {}".format(self.qty,i))
             time.sleep(self.dt)
-        self.finished.emit()
+        self.finished.emit(self.qty)
 
 class MainWindow(QWidget):
     def __init__(self, dev):
@@ -58,8 +58,11 @@ class MainWindow(QWidget):
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
     
-    def onRampCompletion(self):
-        self.main.rampB.setEnabled(True)
+    def onRampCompletion(self,qty):
+        if qty == "VOLT":
+            self.main.sVRampB.setEnabled(True)
+        elif qty == "CURR":
+            self.main.sCRampB.setEnabled(True)
 
     def refreshF(self):
         val = self.inst.query("*IDN?").strip().split(',')
@@ -74,15 +77,16 @@ class MainWindow(QWidget):
             self.main.outB.setStyleSheet("background-color: #000F00;")
 
     def rampF(self,qty):
-        self.main.rampB.setEnabled(False)
         c = float(self.inst.query("{}?".format(qty)).strip())
         if qty == "VOLT":
+            self.main.sVRampB.setEnabled(False)
             s = float(self.main.sVoltage.text().strip())
             if s>32: 
                 s=32.0
             n = int(self.main.sVN.text().strip())
             dt = float(self.main.sVdt.text().strip())
-        else:
+        elif qty=="CURR":
+            self.main.sCRampB.setEnabled(False)
             s = float(self.main.sCurrent.text().strip())
             if s>10:
                 s=10.0
