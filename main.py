@@ -1,11 +1,16 @@
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QWidget, QSizePolicy
 from PyQt6 import uic
 import sys,time
 import pyvisa as pv
-from PyQt6.QtCore import QTimer, QThread, pyqtSignal
+from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from datetime import datetime
+from random import randint
+
+# Add logging - Start and Stop logging buttons
+# Offline functionality for development and testing
 
 class Worker(QThread):
     finished = pyqtSignal(str)
@@ -23,20 +28,26 @@ class Worker(QThread):
         self.finished.emit(self.qty)
 
 class MainWindow(QWidget):
+
+    X = []
+    Y1 = []; Y2 = []
+
     def __init__(self, dev):
         super().__init__()
 
         if dev == None:
             self.inst = None
-            self.close()
-            sys.exit(1)
+            # self.close()
+            # sys.exit(1)
+
+        heve = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.main = uic.loadUi('UIs/main.ui', self)
+        self.main.setWindowState(self.main.windowState() | Qt.WindowState.WindowMaximized)
         self.main.sVdB.setText("\U000002C5")
         self.main.sVuB.setText("\U000002C4")
         self.main.sCdB.setText("\U000002C5")
         self.main.sCuB.setText("\U000002C4")
-        self.main.refreshB.setText("\U000021BB")
         self.main.sVdB.clicked.connect(lambda x: self.stepUD(qty='VOLT', dir="DOWN"))
         self.main.sVuB.clicked.connect(lambda x: self.stepUD(qty='VOLT', dir="UP"))
         self.main.sCdB.clicked.connect(lambda x: self.stepUD(qty='CURR', dir="DOWN"))
@@ -46,18 +57,49 @@ class MainWindow(QWidget):
         self.main.sCRampB.clicked.connect(lambda x: self.rampF(qty='CURR'))
         self.main.refreshB.clicked.connect(self.refreshF)
 
-        self.rm = pv.ResourceManager()
-        self.inst = self.rm.open_resource(dev)
+        # self.rm = pv.ResourceManager()
+        # self.inst = self.rm.open_resource(dev)
 
-        self.refreshF()
+        # self.refreshF()
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update)
-        self.timer.start(1000) # auto update time in ms
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.update)
+        # self.timer.start(100) # auto update time in ms
+
+        self.fig = Figure(); 
+        self.ax1 = self.fig.add_subplot(); self.ax2 = self.ax1.twinx()
+        self.drawPlot()
+
+        self.main.canvas = FigureCanvasQTAgg(self.fig)
+        self.main.canvas.setSizePolicy(heve)
+
+        self.main.layout().addWidget(self.main.canvas,14,0,1,9)
         
+        self.timer2 = QTimer(self)
+        self.timer2.timeout.connect(self.updatePlot)
+        self.timer2.start(1000) # auto update time in ms
+
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
-    
+
+
+    def updatePlot(self):
+        self.line1.set_data(self.X,self.Y1)
+        self.line2.set_data(self.X,self.Y2)
+        self.ax1.relim(); self.ax1.autoscale_view(scaley=True, scalex=True)
+        self.ax2.relim(); self.ax2.autoscale_view(scaley=True, scalex=True)
+        self.main.canvas.draw_idle()
+
+    def drawPlot(self):
+        self.line1, = self.ax1.plot(self.X,self.Y1,color='b')
+        self.line2, = self.ax2.plot(self.X,self.Y2,color='r')
+        self.ax1.set_xlabel('Datetime', fontsize=12)
+        self.ax1.tick_params(labelsize=11)
+        self.ax1.set_ylabel('Voltage (V)', color='blue', fontsize=12)
+        self.ax1.tick_params(axis='y', labelcolor='blue')
+        self.ax2.set_ylabel('Current (A)', color='red', fontsize=12)
+        self.ax2.tick_params(axis='y', labelcolor='red',labelsize=11)
+
     def onRampCompletion(self,qty):
         if qty == "VOLT":
             self.main.sVRampB.setEnabled(True)
@@ -131,8 +173,13 @@ class MainWindow(QWidget):
         self.inst.write("{} {}".format(qty,dir))
         
     def update(self):
-        self.main.mVoltage.display(self.inst.query("MEAS:VOLT?").strip())
-        self.main.mCurrent.display(self.inst.query("MEAS:CURR?").strip())
+        self.X.append(datetime.now())
+        v = self.inst.query("MEAS:VOLT?").strip()
+        c = self.inst.query("MEAS:CURR?").strip()
+        self.Y1.append(float(v))
+        self.Y2.append(float(c))
+        self.main.mVoltage.display(v)        
+        self.main.mCurrent.display(c)
         self.main.power.setText("Power: {:.3f}".format(float(self.inst.query("MEAS:POW?").strip())))
 
     def close(self):
@@ -148,7 +195,7 @@ class DevWindow(QWidget):
         super().__init__()
         self.devWin = uic.loadUi('UIs/devWin.ui', self)
         self.devWin.errText.setVisible(False)
-        self.devWin.okB.setDisabled(True)
+        # self.devWin.okB.setDisabled(True)
 
         self.devWin.refreshB.clicked.connect(self.refreshF)
         self.devWin.okB.clicked.connect(self.okF)
