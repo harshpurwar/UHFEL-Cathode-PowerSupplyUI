@@ -10,8 +10,8 @@ from datetime import datetime
 from random import randint
 
 # Add logging - Start and Stop logging buttons
-# Offline functionality for development and testing
 
+offline=True
 lock=False
 
 class Worker(QThread):
@@ -37,7 +37,7 @@ class MainWindow(QWidget):
     def __init__(self, dev):
         super().__init__()
 
-        if dev == None:
+        if not offline and dev == None:
             self.inst = None
             self.close()
             sys.exit(1)
@@ -48,6 +48,8 @@ class MainWindow(QWidget):
 
         self.main = uic.loadUi('UIs/main.ui', self)
         self.main.setWindowState(self.main.windowState() | Qt.WindowState.WindowMaximized)
+        if offline:
+            self.main.setWindowTitle(self.main.windowTitle()+' (Offline)')
         self.main.sVdB.setText("\U000002C5")
         self.main.sVuB.setText("\U000002C4")
         self.main.sCdB.setText("\U000002C5")
@@ -61,14 +63,18 @@ class MainWindow(QWidget):
         self.main.sCRampB.clicked.connect(lambda x: self.rampF(qty='CURR'))
         self.main.refreshB.clicked.connect(self.refreshF)
 
-        self.rm = pv.ResourceManager()
-        self.inst = self.rm.open_resource(dev)
+        if not offline:
+            self.rm = pv.ResourceManager()
+            self.inst = self.rm.open_resource(dev)
+        else:
+            self.rm = None
+            self.inst = None
 
         self.refreshF()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
-        self.timer.start(100) # auto update time in ms
+        # self.timer.start(100) # auto update time in ms
 
         self.fig = Figure(); 
         self.ax1 = self.fig.add_subplot(); self.ax2 = self.ax1.twinx()
@@ -76,12 +82,11 @@ class MainWindow(QWidget):
 
         self.main.canvas = FigureCanvasQTAgg(self.fig)
         self.main.canvas.setSizePolicy(heve)
-
-        self.main.layout().addWidget(self.main.canvas,14,0,1,9)
+        self.main.layout().addWidget(self.main.canvas,14,0,1,8)
         
         self.timer2 = QTimer(self)
         self.timer2.timeout.connect(self.updatePlot)
-        self.timer2.start(1000) # auto update time in ms
+        # self.timer2.start(1000) # auto update time in ms
 
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
@@ -91,7 +96,10 @@ class MainWindow(QWidget):
         while lock:
             time.sleep(10e-6)
         lock=True
-        r = self.inst.query(cmd).strip()
+        if not offline:
+            r = self.inst.query(cmd).strip()
+        else:
+            r='0'
         lock=False
         return r
 
@@ -100,7 +108,8 @@ class MainWindow(QWidget):
         while lock:
             time.sleep(10e-6)
         lock=True
-        self.inst.write(cmd)
+        if not offline:
+            self.inst.write(cmd)
         lock=False
 
     def updatePlot(self):
@@ -129,9 +138,12 @@ class MainWindow(QWidget):
 
     def refreshF(self):
         val = self.myQuery("*IDN?").split(',')
-        self.title.setText("{} - {}".format(val[0],val[1]))
-        b = val[2].split('/')
-        self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
+        try:
+            self.title.setText("{} - {}".format(val[0],val[1]))
+            b = val[2].split('/')
+            self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
+        except:
+            pass
         self.main.sVoltage.setText('{:.3f}'.format(float(self.myQuery("VOLT?"))))
         self.main.sCurrent.setText('{:.3f}'.format(float(self.myQuery("CURR?"))))
         if int(self.myQuery("OUTP:STAT?")) == 1:
@@ -155,7 +167,7 @@ class MainWindow(QWidget):
                 s=10.0
             n = int(self.main.sCN.text().strip())
             dt = float(self.main.sCdt.text().strip())
-        vals = np.linspace(c,s,n)
+        vals = np.linspace(c,s,n+1)
         self.worker.setData(self, vals, qty, dt)
         self.worker.start()
 
@@ -215,12 +227,16 @@ class DevWindow(QWidget):
         super().__init__()
         self.devWin = uic.loadUi('UIs/devWin.ui', self)
         self.devWin.errText.setVisible(False)
-        self.devWin.okB.setDisabled(True)
+        if not offline:
+            self.devWin.okB.setDisabled(True)
 
         self.devWin.refreshB.clicked.connect(self.refreshF)
         self.devWin.okB.clicked.connect(self.okF)
 
-        self.rm = pv.ResourceManager()
+        if not offline:
+            self.rm = pv.ResourceManager()
+        else:
+            self.rm=None
         self.refreshF()
 
     def okF(self):
@@ -234,12 +250,15 @@ class DevWindow(QWidget):
 
     def refreshF(self):
         self.devices=dict()
-        keys = self.rm.list_resources()
+        if not offline:
+            keys = self.rm.list_resources()
+        else:
+            keys=[]
         if len(keys) == 0:
             self.devWin.errText.setVisible(True)
         else:
-            self.devWin.okB.setDisabled(False)
             self.devWin.errText.setVisible(False)
+            self.devWin.okB.setDisabled(False)
             for i,key in enumerate(keys):
                 try:
                     inst = self.rm.open_resource(key)
