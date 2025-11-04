@@ -12,18 +12,20 @@ from random import randint
 # Add logging - Start and Stop logging buttons
 # Offline functionality for development and testing
 
+lock=False
+
 class Worker(QThread):
     finished = pyqtSignal(str)
     
-    def setData(self,data,inst,qty,dt):
+    def setData(self,obj,data,qty,dt):
         self.data=data
-        self.inst = inst
+        self.mainThread = obj
         self.qty=qty
         self.dt=dt
 
     def run(self):
         for i in self.data:
-            self.inst.write("{} {}".format(self.qty,i))
+            self.mainThread.myWrite("{} {}".format(self.qty,i))
             time.sleep(self.dt)
         self.finished.emit(self.qty)
 
@@ -37,8 +39,10 @@ class MainWindow(QWidget):
 
         if dev == None:
             self.inst = None
-            # self.close()
-            # sys.exit(1)
+            self.close()
+            sys.exit(1)
+        else:
+            self.dev = dev
 
         heve = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
@@ -57,14 +61,14 @@ class MainWindow(QWidget):
         self.main.sCRampB.clicked.connect(lambda x: self.rampF(qty='CURR'))
         self.main.refreshB.clicked.connect(self.refreshF)
 
-        # self.rm = pv.ResourceManager()
-        # self.inst = self.rm.open_resource(dev)
+        self.rm = pv.ResourceManager()
+        self.inst = self.rm.open_resource(dev)
 
-        # self.refreshF()
+        self.refreshF()
 
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.update)
-        # self.timer.start(100) # auto update time in ms
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update)
+        self.timer.start(100) # auto update time in ms
 
         self.fig = Figure(); 
         self.ax1 = self.fig.add_subplot(); self.ax2 = self.ax1.twinx()
@@ -82,6 +86,22 @@ class MainWindow(QWidget):
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
 
+    def myQuery(self,cmd):
+        global lock
+        while lock:
+            time.sleep(10e-6)
+        lock=True
+        r = self.inst.query(cmd).strip()
+        lock=False
+        return r
+
+    def myWrite(self,cmd):
+        global lock
+        while lock:
+            time.sleep(10e-6)
+        lock=True
+        self.inst.write(cmd)
+        lock=False
 
     def updatePlot(self):
         self.line1.set_data(self.X,self.Y1)
@@ -91,6 +111,7 @@ class MainWindow(QWidget):
         self.main.canvas.draw_idle()
 
     def drawPlot(self):
+        time.sleep(1)
         self.line1, = self.ax1.plot(self.X,self.Y1,color='b')
         self.line2, = self.ax2.plot(self.X,self.Y2,color='r')
         self.ax1.set_xlabel('Datetime', fontsize=12)
@@ -107,19 +128,19 @@ class MainWindow(QWidget):
             self.main.sCRampB.setEnabled(True)
 
     def refreshF(self):
-        val = self.inst.query("*IDN?").strip().split(',')
+        val = self.myQuery("*IDN?").split(',')
         self.title.setText("{} - {}".format(val[0],val[1]))
         b = val[2].split('/')
         self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
-        self.main.sVoltage.setText('{:.3f}'.format(float(self.inst.query("VOLT?").strip())))
-        self.main.sCurrent.setText('{:.3f}'.format(float(self.inst.query("CURR?").strip())))
-        if int(self.inst.query("OUTP:STAT?")) == 1:
+        self.main.sVoltage.setText('{:.3f}'.format(float(self.myQuery("VOLT?"))))
+        self.main.sCurrent.setText('{:.3f}'.format(float(self.myQuery("CURR?"))))
+        if int(self.myQuery("OUTP:STAT?")) == 1:
             self.main.outB.setStyleSheet("background-color: #00F000;")
         else:
             self.main.outB.setStyleSheet("background-color: #000F00;")
 
     def rampF(self,qty):
-        c = float(self.inst.query("{}?".format(qty)).strip())
+        c = float(self.myQuery("{}?".format(qty)))
         if qty == "VOLT":
             self.main.sVRampB.setEnabled(False)
             s = float(self.main.sVoltage.text().strip())
@@ -135,12 +156,12 @@ class MainWindow(QWidget):
             n = int(self.main.sCN.text().strip())
             dt = float(self.main.sCdt.text().strip())
         vals = np.linspace(c,s,n)
-        self.worker.setData(vals, self.inst, qty, dt)
+        self.worker.setData(self, vals, qty, dt)
         self.worker.start()
 
     def outF(self):
-        val = int(self.inst.query("OUTP:STAT?"))
-        self.inst.write("OUTP:STAT {}".format(1-val))
+        val = int(self.myQuery("OUTP:STAT?"))
+        self.myWrite("OUTP:STAT {}".format(1-val))
         if val == 1:
             self.main.outB.setStyleSheet("background-color: #000F00;")
         else:
@@ -169,18 +190,17 @@ class MainWindow(QWidget):
                 self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())+step))
             else:
                 self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())-step))        
-        self.inst.write("{}:STEP {}".format(qty,step))
-        self.inst.write("{} {}".format(qty,dir))
+        self.myWrite("{}:STEP {}".format(qty,step))
+        self.myWrite("{} {}".format(qty,dir))
         
     def update(self):
         self.X.append(datetime.now())
-        v = self.inst.query("MEAS:VOLT?").strip()
-        c = self.inst.query("MEAS:CURR?").strip()
+        v = self.myQuery("MEAS:VOLT?")
+        c = self.myQuery("MEAS:CURR?")
         self.Y1.append(float(v))
         self.Y2.append(float(c))
         self.main.mVoltage.display(v)        
         self.main.mCurrent.display(c)
-        self.main.power.setText("Power: {:.3f}".format(float(self.inst.query("MEAS:POW?").strip())))
 
     def close(self):
         if not self.inst == None:
@@ -195,7 +215,7 @@ class DevWindow(QWidget):
         super().__init__()
         self.devWin = uic.loadUi('UIs/devWin.ui', self)
         self.devWin.errText.setVisible(False)
-        # self.devWin.okB.setDisabled(True)
+        self.devWin.okB.setDisabled(True)
 
         self.devWin.refreshB.clicked.connect(self.refreshF)
         self.devWin.okB.clicked.connect(self.okF)
