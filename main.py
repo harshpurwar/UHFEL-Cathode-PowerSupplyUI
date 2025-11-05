@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QSizePolicy
+from PyQt6.QtWidgets import QApplication, QWidget, QSizePolicy, QFileDialog
 from PyQt6 import uic
 import sys,time
 import pyvisa as pv
@@ -6,12 +6,16 @@ from PyQt6.QtCore import Qt, QTimer, QThread, pyqtSignal
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 from datetime import datetime
-from random import randint
+import pickle as pk
+from pathlib import Path
 
 # Add logging - Start and Stop logging buttons
 
-offline=True
+offline=False
+
 lock=False
 
 class Worker(QThread):
@@ -25,14 +29,16 @@ class Worker(QThread):
 
     def run(self):
         for i in self.data:
+            if self.isInterruptionRequested(): # Check for interruption
+                break
             self.mainThread.myWrite("{} {}".format(self.qty,i))
             time.sleep(self.dt)
         self.finished.emit(self.qty)
 
 class MainWindow(QWidget):
 
-    X = []
-    Y1 = []; Y2 = []
+    X = []; Y1 = []; Y2 = []
+    recIdx = []
 
     def __init__(self, dev):
         super().__init__()
@@ -61,7 +67,16 @@ class MainWindow(QWidget):
         self.main.outB.clicked.connect(self.outF)
         self.main.sVRampB.clicked.connect(lambda x: self.rampF(qty='VOLT'))
         self.main.sCRampB.clicked.connect(lambda x: self.rampF(qty='CURR'))
+        self.main.sVRampStopB.clicked.connect(lambda x: self.rampStopF(qty="VOLT"))
+        self.main.sCRampStopB.clicked.connect(lambda x: self.rampStopF(qty="CURR"))
+        self.main.startLogB.clicked.connect(self.startLogF)
+        self.main.browseB.clicked.connect(self.browseF)
+        self.main.saveLogB.clicked.connect(self.saveLogF)
+        self.main.clearB.clicked.connect(self.clearF)
         self.main.refreshB.clicked.connect(self.refreshF)
+
+        self.dir = Path.home() / 'Desktop'
+        self.main.fileName.setText(f'{self.dir / "cathodePS.txt"}')
 
         if not offline:
             self.rm = pv.ResourceManager()
@@ -74,7 +89,7 @@ class MainWindow(QWidget):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
-        # self.timer.start(100) # auto update time in ms
+        self.timer.start(100) # auto update time in ms
 
         self.fig = Figure(); 
         self.ax1 = self.fig.add_subplot(); self.ax2 = self.ax1.twinx()
@@ -82,19 +97,72 @@ class MainWindow(QWidget):
 
         self.main.canvas = FigureCanvasQTAgg(self.fig)
         self.main.canvas.setSizePolicy(heve)
-        self.main.layout().addWidget(self.main.canvas,14,0,1,8)
+        self.main.layout().addWidget(self.main.canvas,16,1,1,9)
         
         self.timer2 = QTimer(self)
         self.timer2.timeout.connect(self.updatePlot)
-        # self.timer2.start(1000) # auto update time in ms
+        self.timer2.start(1000) # auto update time in ms
 
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
 
+    def clearF(self):
+        global lock
+        while lock:
+            time.sleep(1e-6)
+        lock=True
+        self.X = []; self.Y1 = []; self.Y2 = []
+        self.updatePlot()
+        lock=False
+
+    def startLogF(self):            
+        global lock
+        self.main.clearB.setDisabled(True)
+        while lock:
+            time.sleep(1e-6)
+        lock=True
+        self.recIdx.append(self.X[-1])
+        self.ax1.text(self.X[-1],self.Y1[-1],'|',color='green',fontsize=20,fontweight='bold')
+        self.ax2.text(self.X[-1],self.Y2[-1],'|',color='green',fontsize=20,fontweight='bold')
+        lock=False
+        if self.main.startLogB.isChecked():
+            self.main.startLogB.setStyleSheet("background-color: #00FF00;color: black;")
+        else:
+            self.main.startLogB.setStyleSheet("background-color: #001A00;color: white;")
+
+    def browseF(self):
+        fileName, _ = QFileDialog.getSaveFileName(self, "Choose a filename", f'{self.dir}', "All Files (*);;Text Files (*.txt);;CSV Files (*.csv)")
+        if fileName:
+            self.main.fileName.setText(fileName)
+
+    def saveLogF(self):
+        global lock
+        if (len(self.recIdx) == 0) or (self.main.fileName.text().strip() == "") :
+            return
+        if not len(self.recIdx)%2 == 0:
+            self.startLogB.setChecked(False)
+            self.startLogF()
+        while lock:
+            time.sleep(1e-6)
+        lock=True
+        X=[];Y1=[];Y2=[]
+        for i in range(0,len(self.recIdx),2):
+            a = self.X.index(self.recIdx[i])
+            b = self.X.index(self.recIdx[i+1])+1
+            X += self.X[a:b]
+            Y1 += self.Y1[a:b]
+            Y2 += self.Y2[a:b]
+        self.recIdx=[]
+        lock=False
+        with open(self.main.fileName.text(), 'w') as F:
+            for item1, item2, item3 in zip(X, Y1, Y2):
+                F.write(f"{item1},{item2},{item3}\n")
+        self.main.clearB.setDisabled(False)
+    
     def myQuery(self,cmd):
         global lock
         while lock:
-            time.sleep(10e-6)
+            time.sleep(1e-6)
         lock=True
         if not offline:
             r = self.inst.query(cmd).strip()
@@ -106,7 +174,7 @@ class MainWindow(QWidget):
     def myWrite(self,cmd):
         global lock
         while lock:
-            time.sleep(10e-6)
+            time.sleep(1e-6)
         lock=True
         if not offline:
             self.inst.write(cmd)
@@ -117,56 +185,83 @@ class MainWindow(QWidget):
         self.line2.set_data(self.X,self.Y2)
         self.ax1.relim(); self.ax1.autoscale_view(scaley=True, scalex=True)
         self.ax2.relim(); self.ax2.autoscale_view(scaley=True, scalex=True)
+        a = (sys.getsizeof(self.X)/1024 + sys.getsizeof(self.Y1)/1024 + sys.getsizeof(self.Y2)/1024)/1024
+        self.main.size.setText(f"{a:0.2f} MB")
         self.main.canvas.draw_idle()
+
 
     def drawPlot(self):
         time.sleep(1)
-        self.line1, = self.ax1.plot(self.X,self.Y1,color='b')
-        self.line2, = self.ax2.plot(self.X,self.Y2,color='r')
-        self.ax1.set_xlabel('Datetime', fontsize=12)
+        self.line1, = self.ax1.plot(self.X,self.Y1,color='b',alpha=0.4)
+        self.line2, = self.ax2.plot(self.X,self.Y2,color='r',alpha=0.4)
+        self.ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+        self.fig.autofmt_xdate()
+        self.ax1.set_xlabel('Time', fontsize=12)
         self.ax1.tick_params(labelsize=11)
         self.ax1.set_ylabel('Voltage (V)', color='blue', fontsize=12)
         self.ax1.tick_params(axis='y', labelcolor='blue')
         self.ax2.set_ylabel('Current (A)', color='red', fontsize=12)
         self.ax2.tick_params(axis='y', labelcolor='red',labelsize=11)
+        self.ax1.grid('x')
 
+    def rampStopF(self,qty):
+        self.worker.requestInterruption()
+        self.worker.finished.emit(qty)
+        
     def onRampCompletion(self,qty):
         if qty == "VOLT":
             self.main.sVRampB.setEnabled(True)
         elif qty == "CURR":
             self.main.sCRampB.setEnabled(True)
 
-    def refreshF(self):
-        val = self.myQuery("*IDN?").split(',')
-        try:
-            self.title.setText("{} - {}".format(val[0],val[1]))
-            b = val[2].split('/')
-            self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
-        except:
-            pass
-        self.main.sVoltage.setText('{:.3f}'.format(float(self.myQuery("VOLT?"))))
-        self.main.sCurrent.setText('{:.3f}'.format(float(self.myQuery("CURR?"))))
-        if int(self.myQuery("OUTP:STAT?")) == 1:
-            self.main.outB.setStyleSheet("background-color: #00F000;")
-        else:
-            self.main.outB.setStyleSheet("background-color: #000F00;")
-
     def rampF(self,qty):
-        c = float(self.myQuery("{}?".format(qty)))
         if qty == "VOLT":
-            self.main.sVRampB.setEnabled(False)
-            s = float(self.main.sVoltage.text().strip())
+            try:
+                s = float(self.main.sVoltage.text().strip())
+            except:
+                self.main.sVoltage.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sVoltage.setStyleSheet(None)
             if s>32: 
                 s=32.0
-            n = int(self.main.sVN.text().strip())
-            dt = float(self.main.sVdt.text().strip())
+                self.main.sVoltage.setText('32.000')
+            try:
+                n = int(self.main.sVN.text().strip())
+            except:
+                self.main.sVN.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sVN.setStyleSheet(None)
+            try:
+                dt = float(self.main.sVdt.text().strip())
+            except:
+                self.main.sVdt.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sVdt.setStyleSheet(None)
+            self.main.sVRampB.setEnabled(False)
         elif qty=="CURR":
-            self.main.sCRampB.setEnabled(False)
-            s = float(self.main.sCurrent.text().strip())
+            try:
+                s = float(self.main.sCurrent.text().strip())
+            except:
+                self.main.sCurrent.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sCurrent.setStyleSheet(None)
             if s>10:
                 s=10.0
-            n = int(self.main.sCN.text().strip())
-            dt = float(self.main.sCdt.text().strip())
+                self.main.sCurrent.setText('10.000')
+            try:
+                n = int(self.main.sCN.text().strip())
+            except:
+                self.main.sCN.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sCN.setStyleSheet(None)
+            try:
+                dt = float(self.main.sCdt.text().strip())
+            except:
+                self.main.sCdt.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sCdt.setStyleSheet(None)
+            self.main.sCRampB.setEnabled(False)
+        c = float(self.myQuery("{}?".format(qty)))
         vals = np.linspace(c,s,n+1)
         self.worker.setData(self, vals, qty, dt)
         self.worker.start()
@@ -174,10 +269,10 @@ class MainWindow(QWidget):
     def outF(self):
         val = int(self.myQuery("OUTP:STAT?"))
         self.myWrite("OUTP:STAT {}".format(1-val))
-        if val == 1:
-            self.main.outB.setStyleSheet("background-color: #000F00;")
+        if val == 1:    # already on, turn it off
+            self.main.outB.setStyleSheet("background-color: #001A00;")
         else:
-            self.main.outB.setStyleSheet("background-color: #00F000;")
+            self.main.outB.setStyleSheet("background-color: #00FF00;")
 
     def stepUD(self,qty,dir):
         if qty == "VOLT":
@@ -206,14 +301,54 @@ class MainWindow(QWidget):
         self.myWrite("{} {}".format(qty,dir))
         
     def update(self):
+        global lock
+        while lock:
+            time.sleep(1.e-6)
+        lock = True
         self.X.append(datetime.now())
-        v = self.myQuery("MEAS:VOLT?")
-        c = self.myQuery("MEAS:CURR?")
+        if not offline:
+            v = self.inst.query("MEAS:VOLT?").strip()
+            c = self.inst.query("MEAS:CURR?").strip()
+        else:
+            v='0.0';c='0.0'
         self.Y1.append(float(v))
         self.Y2.append(float(c))
+        lock = False
         self.main.mVoltage.display(v)        
         self.main.mCurrent.display(c)
+        sv=float(self.myQuery("VOLT?"))
+        if sv>0:
+            if abs(float(v)-sv)/sv > 0.1:
+                self.main.mVoltage.setStyleSheet('color: red;')
+            else:
+                self.main.mVoltage.setStyleSheet('color: green;')
+        else:
+            self.main.mVoltage.setStyleSheet('color: black;')
+        sv=float(self.myQuery("CURR?"))
+        if sv>0:
+            if abs(float(c)-sv)/sv > 0.1:
+                self.main.mCurrent.setStyleSheet('color: red;')
+            else:
+                self.main.mCurrent.setStyleSheet('color: green;')
+        else:
+            self.main.mCurrent.setStyleSheet('color: black;')
 
+
+    def refreshF(self):
+        val = self.myQuery("*IDN?").split(',')
+        try:
+            self.title.setText("{} - {}".format(val[0],val[1]))
+            b = val[2].split('/')
+            self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
+        except:
+            pass
+        self.main.sVoltage.setText('{:.3f}'.format(float(self.myQuery("VOLT?"))))
+        self.main.sCurrent.setText('{:.3f}'.format(float(self.myQuery("CURR?"))))
+        if int(self.myQuery("OUTP:STAT?")) == 1:
+            self.main.outB.setStyleSheet("background-color: #00FF00;")
+        else:
+            self.main.outB.setStyleSheet("background-color: #001A00;")
+    
     def close(self):
         if not self.inst == None:
             self.inst.close()
