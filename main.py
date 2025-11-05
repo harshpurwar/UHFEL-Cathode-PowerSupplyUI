@@ -72,6 +72,7 @@ class MainWindow(QWidget):
         self.main.startLogB.clicked.connect(self.startLogF)
         self.main.browseB.clicked.connect(self.browseF)
         self.main.saveLogB.clicked.connect(self.saveLogF)
+        self.main.saveAllB.clicked.connect(self.saveAllF)
         self.main.clearB.clicked.connect(self.clearF)
         self.main.refreshB.clicked.connect(self.refreshF)
         self.main.pauseAllB.clicked.connect(self.pauseAllF)
@@ -169,6 +170,19 @@ class MainWindow(QWidget):
         with open(self.main.fileName.text(), 'w') as F:
             for item1, item2, item3 in zip(X, Y1, Y2):
                 F.write(f"{item1},{item2},{item3}\n")
+        self.main.clearB.setDisabled(False)
+    
+    def saveAllF(self):
+        global lock
+        if (self.main.fileName.text().strip() == "") :
+            return
+        while lock:
+            time.sleep(1e-6)
+        lock=True
+        with open(self.main.fileName.text(), 'w') as F:
+            for item1, item2, item3 in zip(self.X, self.Y1, self.Y2):
+                F.write(f"{item1},{item2},{item3}\n")
+        lock=False
         self.main.clearB.setDisabled(False)
     
     def myQuery(self,cmd):
