@@ -7,29 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1021</width>
-    <height>665</height>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>UHFEL Cathode Power Supply Control GUI - Designed &amp; Developed by Harsh Purwar</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="7" column="5" rowspan="3">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Policy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="7" column="1" colspan="4">
     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,1,1">
      <property name="sizeConstraint">
@@ -133,145 +117,6 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="2">
-    <widget class="QLineEdit" name="sVdt">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string>hold time (s)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
-    <widget class="QLineEdit" name="sVN">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string># steps</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="9">
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Set values:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="10">
-    <widget class="QLabel" name="label_13">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>OUTPUT</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="6" colspan="4">
-    <widget class="QLCDNumber" name="mCurrent">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="digitCount">
-      <number>15</number>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1" colspan="4">
-    <widget class="QLabel" name="label_5">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Voltage (V):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="6" colspan="4">
-    <widget class="QLabel" name="label_6">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Current (A):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1" colspan="9">
-    <widget class="QLabel" name="label_4">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Measured:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="7">
-    <widget class="QLineEdit" name="sCdt">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="placeholderText">
-      <string>hold time (s)</string>
-     </property>
-    </widget>
-   </item>
    <item row="14" column="1" colspan="4">
     <widget class="QLCDNumber" name="mVoltage">
      <property name="sizePolicy">
@@ -296,38 +141,6 @@
       <number>15</number>
      </property>
     </widget>
-   </item>
-   <item row="9" column="4">
-    <widget class="QPushButton" name="sVRampStopB">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: #ff2e2e; color:white;</string>
-     </property>
-     <property name="text">
-      <string>STOP</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="2" colspan="7">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Policy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item row="7" column="6" colspan="4">
     <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1,1,1">
@@ -432,31 +245,25 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="6">
-    <widget class="QLineEdit" name="sCN">
+   <item row="15" column="10">
+    <widget class="QPushButton" name="clearB">
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
-     <property name="placeholderText">
-      <string># steps</string>
+     <property name="text">
+      <string>CLEAR</string>
      </property>
     </widget>
    </item>
-   <item row="14" column="10">
-    <widget class="QPushButton" name="outB">
+   <item row="9" column="3">
+    <widget class="QPushButton" name="sVRampB">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>70</height>
-      </size>
      </property>
      <property name="font">
       <font>
@@ -464,14 +271,217 @@
        <bold>true</bold>
       </font>
      </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
      <property name="styleSheet">
-      <string notr="true">background-color: #001A00;</string>
+      <string notr="true">background-color: #00A300;</string>
      </property>
      <property name="text">
-      <string/>
+      <string>RAMP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="4">
+    <widget class="QPushButton" name="sVRampStopB">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #ff2e2e; color:white;</string>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="8">
+    <widget class="QPushButton" name="sCRampB">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #00A300;</string>
+     </property>
+     <property name="text">
+      <string>RAMP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="10" rowspan="2">
+    <widget class="QPushButton" name="refreshB">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="7">
+    <widget class="QLineEdit" name="sCdt">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>hold time (s)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QLineEdit" name="sVdt">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>hold time (s)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="6" colspan="4">
+    <widget class="QLCDNumber" name="mCurrent">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="digitCount">
+      <number>15</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="9">
+    <widget class="QLabel" name="title">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <italic>false</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="5" rowspan="3">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Policy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="15" column="2" colspan="6">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Policy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="2" colspan="7">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Policy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="13" column="10">
+    <widget class="QLabel" name="label_13">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>OUTPUT</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="9">
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Set values:</string>
      </property>
     </widget>
    </item>
@@ -544,25 +554,28 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="8">
-    <widget class="QPushButton" name="sCRampB">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="12" column="1" colspan="9">
+    <widget class="QLabel" name="label_4">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
        <bold>true</bold>
       </font>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: #00A300;</string>
-     </property>
      <property name="text">
-      <string>RAMP</string>
+      <string>Measured:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="6">
+    <widget class="QLineEdit" name="sCN">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string># steps</string>
      </property>
     </widget>
    </item>
@@ -635,8 +648,8 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="3">
-    <widget class="QPushButton" name="sVRampB">
+   <item row="13" column="1" colspan="4">
+    <widget class="QLabel" name="label_5">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -646,30 +659,71 @@
      <property name="font">
       <font>
        <pointsize>12</pointsize>
-       <bold>true</bold>
       </font>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: #00A300;</string>
-     </property>
      <property name="text">
-      <string>RAMP</string>
+      <string>Voltage (V):</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="9">
-    <widget class="QPushButton" name="sCRampStopB">
+   <item row="9" column="1">
+    <widget class="QLineEdit" name="sVN">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string># steps</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="6" colspan="4">
+    <widget class="QLabel" name="label_6">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Current (A):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="10">
+    <widget class="QPushButton" name="outB">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <pointsize>12</pointsize>
        <bold>true</bold>
       </font>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="styleSheet">
-      <string notr="true">background-color: #ff2e2e; color:white;</string>
+      <string notr="true">background-color: #001A00;</string>
      </property>
      <property name="text">
-      <string>STOP</string>
+      <string/>
      </property>
     </widget>
    </item>
@@ -695,53 +749,60 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="9">
-    <widget class="QLabel" name="title">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="9" column="9">
+    <widget class="QPushButton" name="sCRampStopB">
      <property name="font">
       <font>
-       <pointsize>14</pointsize>
-       <italic>false</italic>
+       <pointsize>12</pointsize>
        <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: #ff2e2e; color:white;</string>
+     </property>
+     <property name="text">
+      <string>STOP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="9">
+    <widget class="QLabel" name="size">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
       </font>
      </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="10" rowspan="2">
-    <widget class="QPushButton" name="refreshB">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Refresh</string>
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
      </property>
     </widget>
    </item>
    <item row="16" column="10">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
      <property name="sizeConstraint">
       <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
      </property>
+     <item>
+      <widget class="QPushButton" name="pauseAllB">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Pause
+All
+DAQ</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QLabel" name="label_14">
        <property name="sizePolicy">
@@ -855,49 +916,6 @@ T</string>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="15" column="10">
-    <widget class="QPushButton" name="clearB">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>CLEAR</string>
-     </property>
-    </widget>
-   </item>
-   <item row="15" column="2" colspan="6">
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Policy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>10</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="15" column="9">
-    <widget class="QLabel" name="size">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

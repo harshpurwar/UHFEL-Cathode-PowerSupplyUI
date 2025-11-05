@@ -74,6 +74,7 @@ class MainWindow(QWidget):
         self.main.saveLogB.clicked.connect(self.saveLogF)
         self.main.clearB.clicked.connect(self.clearF)
         self.main.refreshB.clicked.connect(self.refreshF)
+        self.main.pauseAllB.clicked.connect(self.pauseAllF)
 
         self.dir = Path.home() / 'Desktop'
         self.main.fileName.setText(f'{self.dir / "cathodePS.txt"}')
@@ -89,7 +90,7 @@ class MainWindow(QWidget):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
-        self.timer.start(100) # auto update time in ms
+        self.timer.start(10) # auto update time in ms
 
         self.fig = Figure(); 
         self.ax1 = self.fig.add_subplot(); self.ax2 = self.ax1.twinx()
@@ -105,6 +106,17 @@ class MainWindow(QWidget):
 
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
+
+    def pauseAllF(self):
+        if self.main.pauseAllB.isChecked():
+            self.main.pauseAllB.setStyleSheet("background-color: yellow; color: black;")
+            self.timer.stop()
+            self.updatePlot()
+            self.timer2.stop()
+        else:
+            self.main.pauseAllB.setStyleSheet(None)
+            self.timer.start()
+            self.timer2.start()
 
     def clearF(self):
         global lock
@@ -122,8 +134,8 @@ class MainWindow(QWidget):
             time.sleep(1e-6)
         lock=True
         self.recIdx.append(self.X[-1])
-        self.ax1.text(self.X[-1],self.Y1[-1],'|',color='green',fontsize=20,fontweight='bold')
-        self.ax2.text(self.X[-1],self.Y2[-1],'|',color='green',fontsize=20,fontweight='bold')
+        self.ax1.text(self.X[-1],self.Y1[-1],'|',color='orange',fontsize=20,fontweight='bold')
+        self.ax2.text(self.X[-1],self.Y2[-1],'|',color='orange',fontsize=20,fontweight='bold')
         lock=False
         if self.main.startLogB.isChecked():
             self.main.startLogB.setStyleSheet("background-color: #00FF00;color: black;")
@@ -194,6 +206,8 @@ class MainWindow(QWidget):
         time.sleep(1)
         self.line1, = self.ax1.plot(self.X,self.Y1,color='b',alpha=0.4)
         self.line2, = self.ax2.plot(self.X,self.Y2,color='r',alpha=0.4)
+        # self.line3, = self.ax1.plot((),(),color='c',lw=1.75,alpha=0.4)
+        # self.line4, = self.ax2.plot((),(),color='m',lw=1.75,alpha=0.4)
         self.ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         self.fig.autofmt_xdate()
         self.ax1.set_xlabel('Time', fontsize=12)
@@ -283,9 +297,15 @@ class MainWindow(QWidget):
             else:
                 step=1
             if dir == "UP":
-                self.main.sVoltage.setText('{:.3f}'.format(float(self.main.sVoltage.text())+step))
+                nv=float(self.main.sVoltage.text())+step
+                if nv>32:
+                    nv=32.0
+                self.main.sVoltage.setText('{:0.3f}'.format(nv))
             else:
-                self.main.sVoltage.setText('{:.3f}'.format(float(self.main.sVoltage.text())-step))
+                nv=float(self.main.sVoltage.text())-step
+                if nv<0:
+                    nv=0.0
+                self.main.sVoltage.setText('{:0.3f}'.format(nv))
         elif qty=="CURR":
             if self.main.sCCoarse.value() == 0:
                 step=0.01
@@ -294,9 +314,15 @@ class MainWindow(QWidget):
             else:
                 step=1
             if dir == "UP":
-                self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())+step))
+                nv=float(self.main.sCurrent.text())+step
+                if nv>10:
+                    nv=10.0
+                self.main.sCurrent.setText('{:0.3f}'.format(nv))
             else:
-                self.main.sCurrent.setText('{:.3f}'.format(float(self.main.sCurrent.text())-step))        
+                nv=float(self.main.sCurrent.text())-step
+                if nv<0:
+                    nv=0.0
+                self.main.sCurrent.setText('{:0.3f}'.format(nv))
         self.myWrite("{}:STEP {}".format(qty,step))
         self.myWrite("{} {}".format(qty,dir))
         
@@ -342,8 +368,8 @@ class MainWindow(QWidget):
             self.subTitle.setText("Part#: {}, Serial#: {}, FW ver.: {}".format(b[0],b[1],val[3]))
         except:
             pass
-        self.main.sVoltage.setText('{:.3f}'.format(float(self.myQuery("VOLT?"))))
-        self.main.sCurrent.setText('{:.3f}'.format(float(self.myQuery("CURR?"))))
+        self.main.sVoltage.setText('{:0.3f}'.format(float(self.myQuery("VOLT?"))))
+        self.main.sCurrent.setText('{:0.3f}'.format(float(self.myQuery("CURR?"))))
         if int(self.myQuery("OUTP:STAT?")) == 1:
             self.main.outB.setStyleSheet("background-color: #00FF00;")
         else:
