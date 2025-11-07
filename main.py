@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Add logging - Start and Stop logging buttons
 
-offline=False
+offline=True
 
 lock=False
 
@@ -76,6 +76,8 @@ class MainWindow(QWidget):
         self.main.clearB.clicked.connect(self.clearF)
         self.main.refreshB.clicked.connect(self.refreshF)
         self.main.pauseAllB.clicked.connect(self.pauseAllF)
+        self.main.sVoltage.returnPressed.connect(lambda: self.directSetF(qty="VOLT"))
+        self.main.sCurrent.returnPressed.connect(lambda: self.directSetF(qty="CURR"))
 
         self.dir = Path.home() / 'Desktop'
         self.main.fileName.setText(f'{self.dir / "cathodePS.txt"}')
@@ -99,7 +101,7 @@ class MainWindow(QWidget):
 
         self.main.canvas = FigureCanvasQTAgg(self.fig)
         self.main.canvas.setSizePolicy(heve)
-        self.main.layout().addWidget(self.main.canvas,16,1,1,9)
+        self.main.layout().addWidget(self.main.canvas,16,0,1,11)
         
         self.timer2 = QTimer(self)
         self.timer2.timeout.connect(self.updatePlot)
@@ -107,6 +109,34 @@ class MainWindow(QWidget):
 
         self.worker = Worker()
         self.worker.finished.connect(self.onRampCompletion)
+
+    def directSetF(self,qty):
+        if qty=="VOLT":
+            try:
+                s = float(self.main.sVoltage.text().strip())
+            except:
+                self.main.sVoltage.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sVoltage.setStyleSheet(None)
+            if s>32:
+                s=32.0
+            elif s<0:
+                s=0.0
+            self.main.sVoltage.setText(f"{s:.03f}")
+        elif qty=="CURR":
+            try:
+                s = float(self.main.sCurrent.text().strip())
+            except:
+                self.main.sCurrent.setStyleSheet("color: red; font-weight: bold;")
+                return
+            self.main.sCurrent.setStyleSheet(None)
+            if s>10:
+                s=10.0
+            elif s<0:
+                s=0.0
+            self.main.sCurrent.setText(f"{s:.03f}")
+        self.myWrite("{} {}".format(qty,s))
+
 
     def pauseAllF(self):
         if self.main.pauseAllB.isChecked():
@@ -239,20 +269,22 @@ class MainWindow(QWidget):
     def onRampCompletion(self,qty):
         if qty == "VOLT":
             self.main.sVRampB.setEnabled(True)
+            self.main.sVoltage.setText('{:0.3f}'.format(float(self.myQuery("VOLT?"))))
         elif qty == "CURR":
             self.main.sCRampB.setEnabled(True)
+            self.main.sCurrent.setText('{:0.3f}'.format(float(self.myQuery("CURR?"))))
 
     def rampF(self,qty):
         if qty == "VOLT":
             try:
-                s = float(self.main.sVoltage.text().strip())
+                s = float(self.main.sVRampVal.text().strip())
             except:
-                self.main.sVoltage.setStyleSheet("color: red; font-weight: bold;")
+                self.main.sVRampVal.setStyleSheet("color: red; font-weight: bold;")
                 return
-            self.main.sVoltage.setStyleSheet(None)
+            self.main.sVRampVal.setStyleSheet(None)
             if s>32: 
                 s=32.0
-                self.main.sVoltage.setText('32.000')
+                self.main.sVRampVal.setText('32.000')
             try:
                 n = int(self.main.sVN.text().strip())
             except:
@@ -268,14 +300,14 @@ class MainWindow(QWidget):
             self.main.sVRampB.setEnabled(False)
         elif qty=="CURR":
             try:
-                s = float(self.main.sCurrent.text().strip())
+                s = float(self.main.sCRampVal.text().strip())
             except:
-                self.main.sCurrent.setStyleSheet("color: red; font-weight: bold;")
+                self.main.sCRampVal.setStyleSheet("color: red; font-weight: bold;")
                 return
-            self.main.sCurrent.setStyleSheet(None)
+            self.main.sCRampVal.setStyleSheet(None)
             if s>10:
                 s=10.0
-                self.main.sCurrent.setText('10.000')
+                self.main.sCRampVal.setText('10.000')
             try:
                 n = int(self.main.sCN.text().strip())
             except:
@@ -356,6 +388,7 @@ class MainWindow(QWidget):
         lock = False
         self.main.mVoltage.display(v)        
         self.main.mCurrent.display(c)
+        self.main.mPower.display(self.myQuery("MEAS:POW?"))
         sv=float(self.myQuery("VOLT?"))
         if sv>0:
             if abs(float(v)-sv)/sv > 0.1:
