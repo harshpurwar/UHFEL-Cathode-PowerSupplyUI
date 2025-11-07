@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Add logging - Start and Stop logging buttons
 
-offline=True
+offline=False
 
 lock=False
 
