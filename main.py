@@ -388,7 +388,7 @@ class MainWindow(QWidget):
         lock = False
         self.main.mVoltage.display(v)        
         self.main.mCurrent.display(c)
-        self.main.mPower.display(self.myQuery("MEAS:POW?"))
+        self.main.mPower.display("{:.03f}".format(float(v)*float(c)))
         sv=float(self.myQuery("VOLT?"))
         if sv>0:
             if abs(float(v)-sv)/sv > 0.1:

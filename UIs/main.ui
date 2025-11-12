@@ -659,7 +659,7 @@ T</string>
         </font>
        </property>
        <property name="text">
-        <string>Power (W)</string>
+        <string>Power (W):</string>
        </property>
       </widget>
      </item>
